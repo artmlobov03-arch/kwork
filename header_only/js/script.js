@@ -2,77 +2,142 @@
 
 /* ============================================================================
    КОМПЕНСАЦИЯ РЕЖИМА FIREFOX «ТОЛЬКО ТЕКСТ» (Zoom Text Only)
-   В этом режиме браузер увеличивает только шрифты (и HTML, и SVG-текст), а
-   vw-боксы остаются — из-за чего без компенсации весь контент вылезает из ячеек.
-   Решение: измеряем коэффициент текст-зума F (ширина живого HTML-текста против
-   неизменной ширины из canvas) и выставляем --tz-inv = 1/F. На все font-size
-   домножается var(--tz-inv,1), поэтому текст возвращается к проектному размеру.
-   При обычном зуме F = 1 (canvas и HTML масштабируются одинаково), компенсация
-   не срабатывает — статический дизайн ctrl+/− не затрагивается.
+   В этом режиме браузер увеличивает только шрифты, а vw-боксы остаются — без
+   компенсации контент вылезает из ячеек. ВАЖНО: Firefox масштабирует HTML-текст
+   и SVG-текст ПО-РАЗНОМУ (SVG, как правило, не уменьшается ниже 100%). Поэтому
+   меряем ДВА коэффициента отдельными пробами:
+     • HTML-проба  -> F_html -> --tz-inv      (на неё множатся CSS font-size)
+     • SVG-проба   -> F_svg  -> --tz-inv-svg  (на неё множатся SVG font-size в JS)
+   Эталон в обеих пробах — ширина из canvas (текст-зум на canvas не влияет).
+   При обычном зуме оба F ≈ 1, компенсация не трогает статический дизайн ctrl+/−.
    ========================================================================== */
 (function setupTextOnlyZoomCompensation() {
+  // Локальный namespace: const svgNS объявлен ниже по файлу (TDZ), здесь нельзя.
+  var SVG_NS = "http://www.w3.org/2000/svg";
   var PROBE_TEXT = "MMMMMMMMMMWWWWWWWWWWmmmmmmmmmmgg";
   var PROBE_PX = 100;
-  var PROBE_FONT = '400 ' + PROBE_PX + 'px Arial, "Helvetica Neue", sans-serif';
-  var probe = null;
-  var measureCanvasCtx = null;
+  var PROBE_FONT = "400 " + PROBE_PX + 'px Arial, "Helvetica Neue", sans-serif';
+  var htmlProbe = null;
+  var svgProbeText = null;
   var baselineCanvasWidth = 0;
-  var lastInv = null;
+  var lastHtml = null;
+  var lastSvg = null;
+  var debugBox = null;
 
-  function ensureProbe() {
-    if (probe || !document.body) return probe;
-    probe = document.createElement("span");
-    probe.setAttribute("aria-hidden", "true");
-    probe.textContent = PROBE_TEXT;
-    var s = probe.style;
-    s.position = "fixed";
-    s.left = "-99999px";
-    s.top = "0";
-    s.visibility = "hidden";
-    s.pointerEvents = "none";
-    s.whiteSpace = "nowrap";
-    s.display = "inline-block";
-    s.fontFamily = 'Arial, "Helvetica Neue", sans-serif';
-    s.fontWeight = "400";
-    // Сырой px (НЕ через var(--tz-inv)) — чтобы проба честно ловила текст-зум.
-    s.setProperty("font-size", PROBE_PX + "px", "important");
-    s.lineHeight = "1";
-    document.body.appendChild(probe);
-
-    var canvas = document.createElement("canvas");
-    measureCanvasCtx = canvas.getContext("2d");
-    measureCanvasCtx.font = PROBE_FONT;
-    baselineCanvasWidth = Math.max(
-      1,
-      measureCanvasCtx.measureText(PROBE_TEXT).width,
-    );
-
-    if (typeof window.ResizeObserver === "function") {
-      var ro = new window.ResizeObserver(function () {
-        updateTextZoomInverse();
-      });
-      ro.observe(probe);
-    }
-    return probe;
-  }
-
-  function updateTextZoomInverse() {
-    if (!ensureProbe()) return;
-    var htmlWidth = probe.getBoundingClientRect().width;
-    if (!(htmlWidth > 0) || !(baselineCanvasWidth > 0)) return;
-    // F = насколько HTML-текст крупнее «эталона» canvas (canvas не реагирует на
-    // текст-зум). При обычном масштабе F ≈ 1.
-    var factor = htmlWidth / baselineCanvasWidth;
-    if (!(factor > 0) || !isFinite(factor)) factor = 1;
+  function clampInv(factor) {
+    if (!(factor > 0) || !isFinite(factor)) return 1;
     var inv = 1 / factor;
     if (inv > 1) inv = Math.min(inv, 20);
     if (inv < 1) inv = Math.max(inv, 0.05);
-    // Около 1 считаем «компенсация не нужна», чтобы не трогать обычный зум.
-    if (Math.abs(inv - 1) < 0.01) inv = 1;
-    var rounded = inv.toFixed(5);
-    if (rounded === lastInv) return;
-    lastInv = rounded;
-    document.documentElement.style.setProperty("--tz-inv", rounded);
+    if (Math.abs(inv - 1) < 0.01) inv = 1; // около 1 — компенсация не нужна
+    return inv;
+  }
+
+  function ensureProbes() {
+    if (htmlProbe || !document.body) return htmlProbe;
+
+    // Общий эталон: ширина строки из canvas — не реагирует на текст-зум.
+    var canvasCtx = document.createElement("canvas").getContext("2d");
+    canvasCtx.font = PROBE_FONT;
+    baselineCanvasWidth = Math.max(1, canvasCtx.measureText(PROBE_TEXT).width);
+
+    // HTML-проба
+    htmlProbe = document.createElement("span");
+    htmlProbe.setAttribute("aria-hidden", "true");
+    htmlProbe.textContent = PROBE_TEXT;
+    var hs = htmlProbe.style;
+    hs.position = "fixed";
+    hs.left = "-99999px";
+    hs.top = "0";
+    hs.visibility = "hidden";
+    hs.pointerEvents = "none";
+    hs.whiteSpace = "nowrap";
+    hs.display = "inline-block";
+    hs.fontFamily = 'Arial, "Helvetica Neue", sans-serif';
+    hs.fontWeight = "400";
+    hs.lineHeight = "1";
+    hs.setProperty("font-size", PROBE_PX + "px", "important"); // сырой px
+    document.body.appendChild(htmlProbe);
+
+    // SVG-проба (отдельно ловит, как Firefox масштабирует именно SVG-текст)
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("width", "4000");
+    svg.setAttribute("height", "200");
+    svg.setAttribute("aria-hidden", "true");
+    var ss = svg.style;
+    ss.position = "fixed";
+    ss.left = "-99999px";
+    ss.top = "0";
+    ss.visibility = "hidden";
+    ss.pointerEvents = "none";
+    ss.overflow = "visible";
+    svgProbeText = document.createElementNS(SVG_NS, "text");
+    svgProbeText.setAttribute("x", "0");
+    svgProbeText.setAttribute("y", "120");
+    svgProbeText.setAttribute("font-family", 'Arial, "Helvetica Neue", sans-serif');
+    svgProbeText.setAttribute("font-weight", "400");
+    svgProbeText.style.setProperty("font-size", PROBE_PX + "px", "important"); // сырой px
+    svgProbeText.textContent = PROBE_TEXT;
+    svg.appendChild(svgProbeText);
+    document.body.appendChild(svg);
+
+    if (typeof window.ResizeObserver === "function") {
+      // HTML-проба меняет размер при смене текст-зума → пересчёт обоих коэффициентов.
+      new window.ResizeObserver(function () {
+        updateTextZoomInverse();
+      }).observe(htmlProbe);
+    }
+    return htmlProbe;
+  }
+
+  function probeWidth(el) {
+    try {
+      var r = el.getBoundingClientRect();
+      return r && r.width > 0 ? r.width : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function updateTextZoomInverse() {
+    if (!ensureProbes()) return;
+    if (!(baselineCanvasWidth > 0)) return;
+
+    var htmlW = probeWidth(htmlProbe);
+    var svgW = probeWidth(svgProbeText);
+
+    var invHtml = htmlW > 0 ? clampInv(htmlW / baselineCanvasWidth) : 1;
+    var invSvg = svgW > 0 ? clampInv(svgW / baselineCanvasWidth) : 1;
+
+    var rh = invHtml.toFixed(5);
+    var rs = invSvg.toFixed(5);
+    var root = document.documentElement;
+    if (rh !== lastHtml) {
+      lastHtml = rh;
+      root.style.setProperty("--tz-inv", rh);
+    }
+    if (rs !== lastSvg) {
+      lastSvg = rs;
+      root.style.setProperty("--tz-inv-svg", rs);
+    }
+    renderDebug(htmlW, svgW, invHtml, invSvg);
+  }
+
+  function renderDebug(htmlW, svgW, invHtml, invSvg) {
+    if (location.search.indexOf("debug") === -1) return;
+    if (!debugBox) {
+      debugBox = document.createElement("div");
+      debugBox.style.cssText =
+        "position:fixed;right:6px;bottom:6px;z-index:999999;background:#000;color:#0f0;" +
+        "font:12px/1.4 monospace;padding:6px 8px;border:1px solid #0f0;white-space:pre;pointer-events:none;";
+      document.body.appendChild(debugBox);
+    }
+    var base = baselineCanvasWidth.toFixed(1);
+    debugBox.textContent =
+      "TEXT-ZOOM DEBUG\n" +
+      "canvas base: " + base + "\n" +
+      "HTML w: " + htmlW.toFixed(1) + "  F=" + (htmlW / baselineCanvasWidth).toFixed(3) + "  --tz-inv=" + invHtml.toFixed(3) + "\n" +
+      "SVG  w: " + svgW.toFixed(1) + "  F=" + (svgW / baselineCanvasWidth).toFixed(3) + "  --tz-inv-svg=" + invSvg.toFixed(3);
   }
 
   window.__updateTextZoomInverse = updateTextZoomInverse;
@@ -612,7 +677,7 @@ function createSvgText(text, options = {}) {
     options.family || STATIC_TEXT_FAMILY,
     "important",
   );
-  label.style.setProperty("font-size", "calc(" + fontSize + "px * var(--tz-inv, 1))", "important");
+  label.style.setProperty("font-size", "calc(" + fontSize + "px * var(--tz-inv-svg, 1))", "important");
   label.style.setProperty(
     "font-weight",
     String(options.weight || 300),
@@ -628,7 +693,7 @@ function createSvgText(text, options = {}) {
         (options.y !== undefined ? options.y : Math.round(fontSize * 0.82)) +
           index * (options.lineHeight || fontSize * 1.15),
       );
-      tspan.style.setProperty("font-size", "calc(" + fontSize + "px * var(--tz-inv, 1))", "important");
+      tspan.style.setProperty("font-size", "calc(" + fontSize + "px * var(--tz-inv-svg, 1))", "important");
       tspan.style.setProperty(
         "font-weight",
         String(options.weight || 300),
@@ -747,7 +812,7 @@ function createStaticIconSvg(icon) {
       icon.family || "vsevn-icons",
       "important",
     );
-    label.style.setProperty("font-size", "calc(" + iconSize + "px * var(--tz-inv, 1))", "important");
+    label.style.setProperty("font-size", "calc(" + iconSize + "px * var(--tz-inv-svg, 1))", "important");
     label.style.setProperty(
       "font-weight",
       String(icon.weight || 400),
