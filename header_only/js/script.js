@@ -2407,10 +2407,15 @@ function applyViewportMetrics() {
 }
 
 function markViewportChanging() {
-  // Не показываем «щит» и не сбрасываем hover-состояние при изменении вьюпорта:
-  // под зумом это вызывало мигание подсказок и скачки радиокнопок/чекбоксов.
-  if (viewportUpdateFrame !== null) return;
-  viewportUpdateFrame = window.requestAnimationFrame(applyViewportMetrics);
+  // СТАТИЧЕСКИЙ ДИЗАЙН: на resize/зум НИЧЕГО не перерисовываем (как эталон
+  // «верстка тест»). Раскладка на vw, текст — SVG с viewBox: и то, и другое
+  // масштабируется средствами браузера само. Прежняя перерисовка всего текста
+  // на каждый шаг зума (invalidate + renderStaticText) при прокрученной странице
+  // сбивала scroll-anchor и «двигала» страницу. Открытый календарь — единственное,
+  // что нужно переставить под новый масштаб.
+  if (dateCalendarState.field) {
+    positionDateCalendar(dateCalendarState.field);
+  }
 }
 
 function getTableHeaderKey(th) {
