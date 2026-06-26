@@ -1,5 +1,91 @@
 "use strict";
 
+/* ============================================================================
+   КОМПЕНСАЦИЯ РЕЖИМА FIREFOX «ТОЛЬКО ТЕКСТ» (Zoom Text Only)
+   В этом режиме браузер увеличивает только шрифты (и HTML, и SVG-текст), а
+   vw-боксы остаются — из-за чего без компенсации весь контент вылезает из ячеек.
+   Решение: измеряем коэффициент текст-зума F (ширина живого HTML-текста против
+   неизменной ширины из canvas) и выставляем --tz-inv = 1/F. На все font-size
+   домножается var(--tz-inv,1), поэтому текст возвращается к проектному размеру.
+   При обычном зуме F = 1 (canvas и HTML масштабируются одинаково), компенсация
+   не срабатывает — статический дизайн ctrl+/− не затрагивается.
+   ========================================================================== */
+(function setupTextOnlyZoomCompensation() {
+  var PROBE_TEXT = "MMMMMMMMMMWWWWWWWWWWmmmmmmmmmmgg";
+  var PROBE_PX = 100;
+  var PROBE_FONT = '400 ' + PROBE_PX + 'px Arial, "Helvetica Neue", sans-serif';
+  var probe = null;
+  var measureCanvasCtx = null;
+  var baselineCanvasWidth = 0;
+  var lastInv = null;
+
+  function ensureProbe() {
+    if (probe || !document.body) return probe;
+    probe = document.createElement("span");
+    probe.setAttribute("aria-hidden", "true");
+    probe.textContent = PROBE_TEXT;
+    var s = probe.style;
+    s.position = "fixed";
+    s.left = "-99999px";
+    s.top = "0";
+    s.visibility = "hidden";
+    s.pointerEvents = "none";
+    s.whiteSpace = "nowrap";
+    s.display = "inline-block";
+    s.fontFamily = 'Arial, "Helvetica Neue", sans-serif';
+    s.fontWeight = "400";
+    // Сырой px (НЕ через var(--tz-inv)) — чтобы проба честно ловила текст-зум.
+    s.setProperty("font-size", PROBE_PX + "px", "important");
+    s.lineHeight = "1";
+    document.body.appendChild(probe);
+
+    var canvas = document.createElement("canvas");
+    measureCanvasCtx = canvas.getContext("2d");
+    measureCanvasCtx.font = PROBE_FONT;
+    baselineCanvasWidth = Math.max(
+      1,
+      measureCanvasCtx.measureText(PROBE_TEXT).width,
+    );
+
+    if (typeof window.ResizeObserver === "function") {
+      var ro = new window.ResizeObserver(function () {
+        updateTextZoomInverse();
+      });
+      ro.observe(probe);
+    }
+    return probe;
+  }
+
+  function updateTextZoomInverse() {
+    if (!ensureProbe()) return;
+    var htmlWidth = probe.getBoundingClientRect().width;
+    if (!(htmlWidth > 0) || !(baselineCanvasWidth > 0)) return;
+    // F = насколько HTML-текст крупнее «эталона» canvas (canvas не реагирует на
+    // текст-зум). При обычном масштабе F ≈ 1.
+    var factor = htmlWidth / baselineCanvasWidth;
+    if (!(factor > 0) || !isFinite(factor)) factor = 1;
+    var inv = 1 / factor;
+    if (inv > 1) inv = Math.min(inv, 20);
+    if (inv < 1) inv = Math.max(inv, 0.05);
+    // Около 1 считаем «компенсация не нужна», чтобы не трогать обычный зум.
+    if (Math.abs(inv - 1) < 0.01) inv = 1;
+    var rounded = inv.toFixed(5);
+    if (rounded === lastInv) return;
+    lastInv = rounded;
+    document.documentElement.style.setProperty("--tz-inv", rounded);
+  }
+
+  window.__updateTextZoomInverse = updateTextZoomInverse;
+
+  if (document.body) {
+    updateTextZoomInverse();
+  } else {
+    document.addEventListener("DOMContentLoaded", updateTextZoomInverse);
+  }
+  window.addEventListener("load", updateTextZoomInverse);
+  window.addEventListener("resize", updateTextZoomInverse);
+})();
+
 const typeConfig = {
   "xml-ads": {
     value: "xml-ads",
@@ -526,7 +612,7 @@ function createSvgText(text, options = {}) {
     options.family || STATIC_TEXT_FAMILY,
     "important",
   );
-  label.style.setProperty("font-size", fontSize + "px", "important");
+  label.style.setProperty("font-size", "calc(" + fontSize + "px * var(--tz-inv, 1))", "important");
   label.style.setProperty(
     "font-weight",
     String(options.weight || 300),
@@ -542,7 +628,7 @@ function createSvgText(text, options = {}) {
         (options.y !== undefined ? options.y : Math.round(fontSize * 0.82)) +
           index * (options.lineHeight || fontSize * 1.15),
       );
-      tspan.style.setProperty("font-size", fontSize + "px", "important");
+      tspan.style.setProperty("font-size", "calc(" + fontSize + "px * var(--tz-inv, 1))", "important");
       tspan.style.setProperty(
         "font-weight",
         String(options.weight || 300),
@@ -661,7 +747,7 @@ function createStaticIconSvg(icon) {
       icon.family || "vsevn-icons",
       "important",
     );
-    label.style.setProperty("font-size", iconSize + "px", "important");
+    label.style.setProperty("font-size", "calc(" + iconSize + "px * var(--tz-inv, 1))", "important");
     label.style.setProperty(
       "font-weight",
       String(icon.weight || 400),

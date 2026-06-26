@@ -60,7 +60,7 @@ body:has(#adsTable) #zoomFrame {
   top: calc(38 * var(--px));
   margin: 0;
   font-family: "Roboto", sans-serif;
-  font-size: calc(27 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 27 * var(--px));
   font-weight: 400;
   line-height: 1.37;
   color: var(--c-text);
@@ -103,7 +103,7 @@ body:has(#adsTable) #zoomFrame {
   padding: 0 calc(22 * var(--px));
 }
 .ads-dropdown--xml .ads-dropdown-text {
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   flex: 1;
   min-width: 0;
   text-align: left;
@@ -129,7 +129,7 @@ body:has(#adsTable) #zoomFrame {
   transform: translateY(-50%) rotate(180deg);
 }
 .ads-dropdown--xml .ads-dropdown-option {
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   line-height: 1.37;
 }
 .ads-dropdown--xml:hover {
@@ -183,11 +183,11 @@ body:has(#adsTable) #zoomFrame {
 .ads-dropdown--groups .ads-dropdown-option {
   padding: calc(12 * var(--px)) calc(22 * var(--px)) calc(12 * var(--px))
     calc(18 * var(--px));
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   line-height: 1.37;
 }
 .ads-dropdown-text {
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   line-height: 1;
   color: var(--c-text);
@@ -293,7 +293,7 @@ body:has(#adsTable) #zoomFrame {
 }
 .ads-dropdown-option {
   padding: calc(12 * var(--px)) calc(22 * var(--px));
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   font-weight: 300;
   line-height: 1.37;
   color: var(--c-muted);
@@ -373,7 +373,7 @@ body:has(#adsTable) #zoomFrame {
 .ads-date-line {
   display: block;
   padding: var(--fc-toolbar-top, calc(10 * var(--px))) calc(14 * var(--px)) 0;
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   line-height: 1;
   white-space: nowrap;
@@ -408,7 +408,7 @@ body:has(#adsTable) #zoomFrame {
   display: inline-block;
   line-height: 1;
   padding: 0;
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   white-space: nowrap;
   text-align: center;
@@ -446,7 +446,7 @@ body:has(#adsTable) #zoomFrame {
   left: calc(11.7 * var(--px));
   top: calc(1.7 * var(--px));
   font-family: "Roboto", sans-serif;
-  font-size: calc(14 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 14 * var(--px));
   font-weight: 100;
   line-height: 1.37;
   color: #9c9c9c;
@@ -545,7 +545,7 @@ body:has(#adsTable) #zoomFrame {
   min-width: 0;
   height: auto;
   padding: 0 calc(47 * var(--px)) 0 calc(18 * var(--px));
-  font-size: calc(21 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21 * var(--px));
   line-height: 1;
   white-space: nowrap;
   pointer-events: none;
@@ -633,7 +633,7 @@ body:has(#adsTable) #zoomFrame {
   flex: 1;
   min-width: 0;
   padding-right: calc(26 * var(--px));
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   font-weight: 300;
   line-height: 1;
   color: var(--c-text);
@@ -667,7 +667,7 @@ body:has(#adsTable) #zoomFrame {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   font-weight: 300;
   line-height: 1;
   box-sizing: border-box;
@@ -703,7 +703,7 @@ body:has(#adsTable) #zoomFrame {
   border: calc(0.3 * var(--px)) solid var(--c-border);
   border-radius: 0;
   font-family: "Roboto", sans-serif;
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   font-weight: 300;
   color: #c6c6c6;
   cursor: pointer;
@@ -720,7 +720,7 @@ body:has(#adsTable) #zoomFrame {
     color 0.15s ease;
 }
 .ads-pagination button.is-edge {
-  font-size: calc(16 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 16 * var(--px));
   letter-spacing: calc(0.1297 * var(--px));
   line-height: calc(15.565 * var(--px));
 }
@@ -747,7 +747,7 @@ body:has(#adsTable) #zoomFrame {
   background: var(--c-link);
   border: calc(1 * var(--px)) solid var(--c-link);
   color: #fff;
-  font-size: calc(22 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 22 * var(--px));
   font-weight: 400;
   line-height: 1;
 }
@@ -755,7 +755,7 @@ body:has(#adsTable) #zoomFrame {
   color: #c6c6c6;
 }
 .ads-pagination button.ellipsis {
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 400;
   line-height: 1;
   background: #fffefb;
@@ -780,7 +780,7 @@ body:has(#adsTable) #zoomFrame {
   background: #eaeaea;
   color: #000;
   font-family: "Roboto", sans-serif;
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   line-height: calc(25 * var(--px));
   border-radius: 0;
@@ -804,7 +804,7 @@ body:has(#adsTable) #zoomFrame {
   background: #eaeaea;
   color: #000;
   font-family: "Roboto", sans-serif;
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   line-height: calc(25 * var(--px));
   border-radius: 0;
@@ -873,7 +873,7 @@ body:has(#adsTable) #zoomFrame {
   border-color: var(--c-link);
 }
 .ads-radio-text {
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   line-height: 1;
   padding-top: var(--fc-216-lc-28-top, calc(2 * var(--px)));
@@ -907,7 +907,7 @@ body:has(#adsTable) #zoomFrame {
   position: relative;
   padding-left: calc(38 * var(--px));
   padding-top: var(--fc-216-lc-28-top, calc(2 * var(--px)));
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   line-height: 1;
   color: var(--c-text);
@@ -1037,7 +1037,7 @@ body:has(#adsTable) #zoomFrame {
 }
 .ads-legend-row {
   display: block;
-  font-size: calc(21.6 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21.6 * var(--px));
   font-weight: 300;
   white-space: nowrap;
   flex-shrink: 0;
@@ -1061,7 +1061,7 @@ body:has(#adsTable) #zoomFrame {
   border-collapse: collapse;
   table-layout: fixed;
   width: calc(1849 * var(--px));
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
 }
 .ads-table th,
 .ads-table td {
@@ -1099,7 +1099,7 @@ body.ads-col-resizing * {
   gap: calc(4 * var(--px));
   height: calc(29 * var(--px));
   overflow: visible;
-  font-size: calc(21 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21 * var(--px));
   font-weight: 300;
   line-height: calc(29 * var(--px));
   color: var(--c-text);
@@ -1146,7 +1146,7 @@ body.ads-col-resizing * {
   user-select: text;
   -webkit-user-select: text;
   cursor: text;
-  font-size: calc(21 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21 * var(--px));
   font-weight: 300;
   line-height: calc(29 * var(--px));
 }
@@ -1269,7 +1269,7 @@ body.ads-col-resizing * {
   outline: 0;
   background: transparent;
   font-family: "Roboto", sans-serif;
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 300;
   color: var(--c-text);
   height: calc(20 * var(--px));
@@ -1289,7 +1289,7 @@ body.ads-col-resizing * {
   inset: 0;
   z-index: 2;
   color: var(--c-placeholder);
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 300;
   line-height: calc(20 * var(--px));
   pointer-events: none;
@@ -1381,7 +1381,7 @@ body.ads-col-resizing * {
   max-width: 100%;
   margin: 0;
   padding: 0;
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 400;
   line-height: calc(24 * var(--px));
   border: 0;
@@ -1598,7 +1598,7 @@ body.ads-col-resizing * {
   box-sizing: border-box;
 }
 .ads-cell-line {
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 300;
   line-height: calc(24 * var(--px));
   color: var(--c-text);
@@ -1608,7 +1608,7 @@ body.ads-col-resizing * {
 .ads-table th.col-time .ads-th-line {
   left: calc(6 * var(--px));
   right: calc(6 * var(--px));
-  font-size: calc(21 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 21 * var(--px));
   line-height: calc(29 * var(--px));
   height: auto;
   min-height: calc(29 * var(--px));
@@ -1641,7 +1641,7 @@ body.ads-col-resizing * {
   line-height: calc(24 * var(--px));
   min-height: calc(24 * var(--px));
   height: calc(24 * var(--px));
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   margin: 0;
   padding: 0;
 }
@@ -1986,7 +1986,7 @@ a.ads-vacancy-count:focus-visible {
 /* Строка «Дата отклика DD.MM.YYYY» — #62560E, 20px Light, одна линия */
 .ads-response-date {
   color: var(--c-text);
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 300;
   line-height: calc(24 * var(--px));
 }
@@ -2060,7 +2060,7 @@ a.ads-cell-link:not(.ads-fio-link) {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 300;
   line-height: calc(24 * var(--px));
   color: #4d4343;
@@ -2074,7 +2074,7 @@ a.ads-cell-link:not(.ads-fio-link) {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  font-size: calc(20 * var(--px));
+  font-size: calc(var(--tz-inv, 1) * 20 * var(--px));
   font-weight: 300;
   line-height: calc(24 * var(--px));
   color: #4d4343;

@@ -502,7 +502,7 @@ body {
     font-family: 'Roboto', sans-serif;
     background: #FFFCEC;
     color: #333333;
-    font-size: calc(1.02917 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.02917 * var(--fvw, 1vw));
     line-height: 1.4;
 }
 
@@ -647,27 +647,27 @@ a {
 .nav-link[data-tab="ads"] .icon {
     width: calc(28 / 19.2 * var(--fvw, 1vw));
     height: calc(32 / 19.2 * var(--fvw, 1vw));
-    font-size: calc(28 / 19.2 * var(--fvw, 1vw)) !important;
+    font-size: calc(var(--tz-inv, 1) * 28 / 19.2 * var(--fvw, 1vw)) !important;
 }
 
 .nav-link[data-tab="letters"] .icon {
     width: calc(36 / 19.2 * var(--fvw, 1vw));
     height: calc(32 / 19.2 * var(--fvw, 1vw));
-    font-size: calc(36 / 19.2 * var(--fvw, 1vw)) !important;
+    font-size: calc(var(--tz-inv, 1) * 36 / 19.2 * var(--fvw, 1vw)) !important;
 }
 
 .nav-link[data-tab="import"] .icon,
 .nav-link[data-tab="companies"] .icon {
     width: calc(33 / 19.2 * var(--fvw, 1vw));
     height: calc(32 / 19.2 * var(--fvw, 1vw));
-    font-size: calc(33 / 19.2 * var(--fvw, 1vw)) !important;
+    font-size: calc(var(--tz-inv, 1) * 33 / 19.2 * var(--fvw, 1vw)) !important;
 }
 
 .nav-link[data-tab="resume"] .icon,
 .nav-link[data-tab="managers"] .icon {
     width: calc(32 / 19.2 * var(--fvw, 1vw));
     height: calc(32 / 19.2 * var(--fvw, 1vw));
-    font-size: calc(32 / 19.2 * var(--fvw, 1vw)) !important;
+    font-size: calc(var(--tz-inv, 1) * 32 / 19.2 * var(--fvw, 1vw)) !important;
 }
 
 .icon::before,
@@ -1448,7 +1448,7 @@ a {
     width: 100%;
     height: 100%;
     color: #62560E;
-    font-size: calc(0.52083 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.52083 * var(--fvw, 1vw));
     font-style: normal;
     font-weight: normal;
     line-height: 1;
@@ -1802,7 +1802,7 @@ a {
 
 .paperclip-icon {
     font-family: 'vsevn-icons' !important;
-    font-size: calc(1.77083 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.77083 * var(--fvw, 1vw));
     font-style: normal;
     font-weight: normal;
     line-height: 1;
@@ -2238,7 +2238,7 @@ a {
     overflow: hidden;
     color: #0476D8;
     font-family: 'vsevn-underline-dot' !important;
-    font-size: calc(0.20833 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.20833 * var(--fvw, 1vw));
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
@@ -2625,7 +2625,7 @@ html.is-zoom-hover-blocked .date-calendar:not([hidden]) {
     justify-content: center;
     width: calc(1.875 * var(--fvw, 1vw));
     height: calc(1.875 * var(--fvw, 1vw));
-    font-size: calc(1.875 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.875 * var(--fvw, 1vw));
     transition: color 0.15s;
     outline: none;
     overflow: hidden;
@@ -2664,7 +2664,7 @@ html.is-zoom-hover-blocked .date-calendar:not([hidden]) {
 }
 
 .warning-icon {
-    font-size: calc(1.875 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.875 * var(--fvw, 1vw));
     color: #E5A521;
 }
 
@@ -2679,7 +2679,7 @@ html.is-zoom-hover-blocked .date-calendar:not([hidden]) {
     justify-content: center;
     width: calc(1.6667 * var(--fvw, 1vw));
     height: calc(1.6667 * var(--fvw, 1vw));
-    font-size: calc(1.25 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.25 * var(--fvw, 1vw));
     transition: color 0.15s;
     outline: none;
     overflow: hidden;
@@ -2694,7 +2694,7 @@ html.is-zoom-hover-blocked .date-calendar:not([hidden]) {
     display: inline-block;
     width: 1em;
     height: 1em;
-    font-size: calc(1.25 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.25 * var(--fvw, 1vw));
     line-height: 1;
 }
 
@@ -2779,7 +2779,7 @@ body.log-preview-open {
     overflow: hidden;
     color: #62560E;
     font-family: 'Roboto', sans-serif;
-    font-size: calc(1.30208 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.30208 * var(--fvw, 1vw));
     font-weight: 300;
     line-height: 1.2;
     text-overflow: ellipsis;
@@ -2845,14 +2845,14 @@ body.log-preview-open {
 
 .log-preview-meta-item span {
     color: rgba(98, 86, 14, 0.62);
-    font-size: calc(0.67708 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.67708 * var(--fvw, 1vw));
     font-weight: 300;
 }
 
 .log-preview-meta-item strong {
     margin-top: calc(0.20833 * var(--fvw, 1vw));
     color: #62560E;
-    font-size: calc(0.9375 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.9375 * var(--fvw, 1vw));
     font-weight: 300;
 }
 
@@ -2871,7 +2871,7 @@ body.log-preview-open {
     background: #FFFFFF;
     color: #333333;
     font-family: monospace;
-    font-size: calc(0.72917 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.72917 * var(--fvw, 1vw));
     line-height: 1.3;
 }
 
@@ -2902,7 +2902,7 @@ body.log-preview-open {
 .log-preview-source-title {
     color: #62560E;
     font-family: 'Roboto', sans-serif;
-    font-size: calc(0.9375 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.9375 * var(--fvw, 1vw));
     font-weight: 300;
     line-height: 1.35;
 }
@@ -2932,7 +2932,7 @@ body.log-preview-open {
     padding: calc(0.46875 * var(--fvw, 1vw)) calc(0.625 * var(--fvw, 1vw));
     color: #62560E;
     font-family: 'Roboto', sans-serif;
-    font-size: calc(0.83333 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.83333 * var(--fvw, 1vw));
     font-weight: 300;
     line-height: 1.3;
     vertical-align: top;
@@ -2941,7 +2941,7 @@ body.log-preview-open {
 .log-preview-table th,
 .log-preview-source-table th {
     background: #FFF7BB;
-    font-size: calc(0.9375 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 0.9375 * var(--fvw, 1vw));
     text-align: left;
 }
 
@@ -3062,7 +3062,7 @@ body.log-preview-open {
     padding: 0 calc(0.8 * var(--fvw, 1vw));
     box-shadow: inset 0 0 0 var(--ui-control-line, calc(0.02604 * var(--fvw, 1vw))) #EFE8CD;
     color: #62560E;
-    font-size: calc(1.125 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.125 * var(--fvw, 1vw));
     font-weight: 300;
     text-transform: uppercase;
     white-space: nowrap;
@@ -3092,7 +3092,7 @@ body.log-preview-open {
     background: #FFFFFF;
     box-shadow: inset 0 0 0 var(--ui-control-line, calc(0.02604 * var(--fvw, 1vw))) #EFE8CD;
     color: #999999;
-    font-size: calc(1.125 * var(--fvw, 1vw));
+    font-size: calc(var(--tz-inv, 1) * 1.125 * var(--fvw, 1vw));
     font-weight: 300;
     cursor: pointer;
     border: none;
