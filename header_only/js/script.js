@@ -176,6 +176,51 @@
   }
 })();
 
+/* ============================================================================
+   УДЕРЖАНИЕ ПРОКРУТКИ ПРИ ИЗМЕНЕНИИ МАСШТАБА.
+   При обычном (full-page) зуме vw-страница меняет высоту в CSS-пикселях, и
+   браузер по-своему пере-привязывает скролл — из-за чего прокрученная вниз
+   страница «уезжает»/дёргается (в режиме «только текст» высота не меняется, там
+   этого нет). Запоминаем ДОЛЮ прокрутки до зума и восстанавливаем её после —
+   тогда под вьюпортом остаётся тот же контент.
+   ========================================================================== */
+(function preserveScrollAcrossZoom() {
+  var root = document.documentElement;
+  var savedFraction = 0;
+
+  function scrollableHeight() {
+    return Math.max(1, root.scrollHeight - window.innerHeight);
+  }
+  function currentScroll() {
+    return window.pageYOffset || root.scrollTop || 0;
+  }
+  window.addEventListener(
+    "scroll",
+    function () {
+      // Во время зума скролл трогает сам браузер — не запоминаем это значение.
+      if (root.classList.contains("is-zooming")) return;
+      savedFraction = currentScroll() / scrollableHeight();
+    },
+    { passive: true },
+  );
+
+  function restore() {
+    var target = savedFraction * scrollableHeight();
+    if (Math.abs(target - currentScroll()) > 0.5) {
+      window.scrollTo(0, target);
+    }
+  }
+  window.addEventListener("resize", function () {
+    restore(); // синхронно — до отрисовки
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(restore); // и после того, как раскладка устаканилась
+    }
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", restore);
+  }
+})();
+
 const typeConfig = {
   "xml-ads": {
     value: "xml-ads",
