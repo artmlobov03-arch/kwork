@@ -2178,3 +2178,25 @@ body:has(.ads-page) #zoomFrame {
   min-height: 100vh;
   background: #fffcec;
 }
+
+/* ============================================================================
+   СТАТИЧЕСКИЙ ДИЗАЙН: гасим артефакты на время изменения масштаба.
+   При зуме vw-свойства (border-width, размеры) меняются, и любые CSS-transition
+   их АНИМИРУЮТ — отсюда «изменение радиокнопок/чекбоксов» и микро-дёрганья.
+   Также при зуме контент масштабируется под неподвижным курсором и срабатывает
+   hover → выскакивают подсказки. Пока класс is-zooming активен (~260мс после
+   последнего шага зума) — отключаем все переходы/анимации и прячем подсказки.
+   Клики (вне момента зума) анимируются как обычно — ТЗ п.18 сохранён.
+   ========================================================================== */
+html.is-zooming *,
+html.is-zooming *::before,
+html.is-zooming *::after {
+  transition: none !important;
+  animation: none !important;
+}
+html.is-zooming .ads-tip,
+html.is-zooming .ads-tooltip,
+html.is-zooming .filepath-tooltip {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}

@@ -151,6 +151,31 @@
   window.addEventListener("resize", updateTextZoomInverse);
 })();
 
+/* ============================================================================
+   ГАСИМ TRANSITION/ANIMATION И ПОДСКАЗКИ НА ВРЕМЯ ИЗМЕНЕНИЯ МАСШТАБА.
+   Браузерный зум меняет vw-свойства (border-width радио/чекбоксов, размеры),
+   и CSS-transition их анимирует → «изменение радиокнопок» и микро-дёрганья.
+   Вешаем html.is-zooming на ~260мс после каждого шага зума: пока класс активен,
+   CSS отключает все переходы/анимации и прячет подсказки. Клики вне момента
+   зума анимируются как обычно (ТЗ п.18 не нарушается).
+   ========================================================================== */
+(function setupZoomTransitionGuard() {
+  var root = document.documentElement;
+  var timer = null;
+  function onViewportChange() {
+    root.classList.add("is-zooming");
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(function () {
+      root.classList.remove("is-zooming");
+      timer = null;
+    }, 260);
+  }
+  window.addEventListener("resize", onViewportChange);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", onViewportChange);
+  }
+})();
+
 const typeConfig = {
   "xml-ads": {
     value: "xml-ads",
